@@ -1,2104 +1,1147 @@
-script.js
-```javascript
-/* =========================================
-   BIG BROTHER CUSTOM SIMULATOR
-========================================= */
-
-
-/* =========================================
-   GAME DATA
-========================================= */
+// ======================================================
+// BIG BROTHER SIMULATOR
+// ======================================================
 
 let houseguests = [];
-
 let evictedHouseguests = [];
-
 let jury = [];
-
 let alliances = [];
-
 let relationships = [];
-
 let customTwists = [];
 
 let currentWeek = 1;
-
 let currentHOH = null;
-
 let nominees = [];
-
 let povWinner = null;
-
 let seasonStarted = false;
 
 
-/* =========================================
-   NAVIGATION
-========================================= */
+// ======================================================
+// SECTION NAVIGATION
+// ======================================================
 
 function showSection(sectionName) {
 
-    const sections =
-        document.querySelectorAll(
-            ".page-section"
-        );
+    const sections = document.querySelectorAll(".page-section");
 
-    sections.forEach(
-        section => {
+    sections.forEach(function(section) {
+        section.classList.remove("active");
+    });
 
-            section.classList.remove(
-                "active"
-            );
-
-        }
-    );
-
-
-    const selected =
-        document.getElementById(
-            sectionName
-        );
-
+    const selected = document.getElementById(sectionName);
 
     if (selected) {
-
-        selected.classList.add(
-            "active"
-        );
-
+        selected.classList.add("active");
     }
 
+    updateAllDisplays();
 }
 
 
-/* =========================================
-   ADD HOUSEGUEST
-========================================= */
+// ======================================================
+// HOUSEGUESTS
+// ======================================================
 
 function addHouseguest() {
 
-    const name =
-        document.getElementById(
-            "nameInput"
-        ).value.trim();
+    const name = document.getElementById("nameInput").value.trim();
+    const image = document.getElementById("imageInput").value.trim();
 
-
-    const image =
-        document.getElementById(
-            "imageInput"
-        ).value.trim();
-
-
-    const physical =
-        Number(
-            document.getElementById(
-                "physicalInput"
-            ).value
-        ) || 5;
-
-
-    const mental =
-        Number(
-            document.getElementById(
-                "mentalInput"
-            ).value
-        ) || 5;
-
-
-    const social =
-        Number(
-            document.getElementById(
-                "socialInput"
-            ).value
-        ) || 5;
-
-
-    const strategy =
-        Number(
-            document.getElementById(
-                "strategyInput"
-            ).value
-        ) || 5;
-
+    const physical = Number(document.getElementById("physicalInput").value) || 5;
+    const mental = Number(document.getElementById("mentalInput").value) || 5;
+    const social = Number(document.getElementById("socialInput").value) || 5;
+    const strategy = Number(document.getElementById("strategyInput").value) || 5;
 
     if (!name) {
-
-        alert(
-            "Enter a houseguest name."
-        );
-
+        alert("Please enter a houseguest name.");
         return;
-
     }
 
-
-    const player = {
-
-        id:
-            Date.now(),
-
-        name:
-            name,
-
-        image:
-            image ||
-            "https://placehold.co/400x500?text=" +
-            encodeURIComponent(name),
-
-        physical:
-            Math.min(
-                10,
-                Math.max(
-                    1,
-                    physical
-                )
-            ),
-
-        mental:
-            Math.min(
-                10,
-                Math.max(
-                    1,
-                    mental
-                )
-            ),
-
-        social:
-            Math.min(
-                10,
-                Math.max(
-                    1,
-                    social
-                )
-            ),
-
-        strategy:
-            Math.min(
-                10,
-                Math.max(
-                    1,
-                    strategy
-                )
-            ),
-
-        active:
-            true
-
+    const houseguest = {
+        id: Date.now(),
+        name: name,
+        image: image || "https://placehold.co/400x500?text=Houseguest",
+        physical: physical,
+        mental: mental,
+        social: social,
+        strategy: strategy,
+        status: "In House"
     };
 
+    houseguests.push(houseguest);
 
-    houseguests.push(
-        player
-    );
-
-
-    document.getElementById(
-        "nameInput"
-    ).value = "";
-
-
-    document.getElementById(
-        "imageInput"
-    ).value = "";
-
-
-    document.getElementById(
-        "physicalInput"
-    ).value = "";
-
-
-    document.getElementById(
-        "mentalInput"
-    ).value = "";
-
-
-    document.getElementById(
-        "socialInput"
-    ).value = "";
-
-
-    document.getElementById(
-        "strategyInput"
-    ).value = "";
-
+    document.getElementById("nameInput").value = "";
+    document.getElementById("imageInput").value = "";
 
     updateAllDisplays();
 
-
-    addEvent(
-        "👤 " +
-        name +
-        " has joined the Big Brother house."
-    );
-
+    alert(name + " has been added to the cast!");
 }
 
-
-
-/* =========================================
-   CAST DISPLAY
-========================================= */
-
-function updateCastDisplay() {
-
-    const grid =
-        document.getElementById(
-            "castGrid"
-        );
-
-
-    grid.innerHTML = "";
-
-
-    houseguests.forEach(
-        player => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "houseguest-card";
-
-
-            card.innerHTML = `
-
-                <img
-                    src="${player.image}"
-                    alt="${player.name}"
-                >
-
-                <h3>
-                    ${player.name}
-                </h3>
-
-                <div class="stats">
-
-                    <p>
-                        💪 Physical:
-                        ${player.physical}
-                    </p>
-
-                    <p>
-                        🧠 Mental:
-                        ${player.mental}
-                    </p>
-
-                    <p>
-                        ❤️ Social:
-                        ${player.social}
-                    </p>
-
-                    <p>
-                        ♟ Strategy:
-                        ${player.strategy}
-                    </p>
-
-                </div>
-
-                <button
-                    onclick="removeHouseguest(${player.id})"
-                >
-                    REMOVE
-                </button>
-
-            `;
-
-
-            grid.appendChild(
-                card
-            );
-
-        }
-    );
-
-}
-
-
-
-/* =========================================
-   REMOVE HOUSEGUEST
-========================================= */
 
 function removeHouseguest(id) {
 
-    const player =
-        houseguests.find(
-            p =>
-            p.id === id
-        );
-
+    const player = houseguests.find(function(p) {
+        return p.id === id;
+    });
 
     if (!player) return;
 
-
-    if (
-        !confirm(
-            "Remove " +
-            player.name +
-            " from the cast?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    houseguests =
-        houseguests.filter(
-            p =>
-            p.id !== id
-        );
-
+    houseguests = houseguests.filter(function(p) {
+        return p.id !== id;
+    });
 
     updateAllDisplays();
-
 }
 
 
+function updateCastDisplay() {
 
-/* =========================================
-   CREATE TWIST
-========================================= */
+    const grid = document.getElementById("castGrid");
 
-function createTwist() {
+    if (!grid) return;
 
-    const name =
-        document.getElementById(
-            "twistNameInput"
-        ).value.trim();
-
-
-    const description =
-        document.getElementById(
-            "twistDescriptionInput"
-        ).value.trim();
-
-
-    if (!name) {
-
-        alert(
-            "Enter a twist name."
-        );
-
+    if (houseguests.length === 0) {
+        grid.innerHTML = '<div class="empty">No houseguests added yet.</div>';
         return;
-
     }
 
+    grid.innerHTML = "";
 
-    const twist = {
+    houseguests.forEach(function(player) {
 
-        id:
-            Date.now(),
+        const card = document.createElement("div");
+        card.className = "houseguest-card";
 
-        name:
-            name,
+        card.innerHTML = `
+            <img src="${escapeHTML(player.image)}" alt="${escapeHTML(player.name)}"
+                 onerror="this.src='https://placehold.co/400x500?text=Houseguest'">
 
-        description:
-            description ||
-            "Custom Big Brother twist.",
+            <div class="houseguest-info">
 
-        active:
-            false
+                <h3>${escapeHTML(player.name)}</h3>
 
-    };
+                <div class="stat">
+                    <span>Physical</span>
+                    <strong>${player.physical}</strong>
+                </div>
 
+                <div class="stat">
+                    <span>Mental</span>
+                    <strong>${player.mental}</strong>
+                </div>
 
-    customTwists.push(
-        twist
-    );
+                <div class="stat">
+                    <span>Social</span>
+                    <strong>${player.social}</strong>
+                </div>
 
+                <div class="stat">
+                    <span>Strategy</span>
+                    <strong>${player.strategy}</strong>
+                </div>
 
-    document.getElementById(
-        "twistNameInput"
-    ).value = "";
-
-
-    document.getElementById(
-        "twistDescriptionInput"
-    ).value = "";
-
-
-    updateTwistDisplay();
-
-
-    addEvent(
-        "🌀 Created custom twist: " +
-        name
-    );
-
-}
-
-
-
-/* =========================================
-   DISPLAY TWISTS
-========================================= */
-
-function updateTwistDisplay() {
-
-    const list =
-        document.getElementById(
-            "twistList"
-        );
-
-
-    list.innerHTML = "";
-
-
-    customTwists.forEach(
-        twist => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "twist-card" +
-                (
-                    twist.active
-                    ? " active"
-                    : ""
-                );
-
-
-            card.innerHTML = `
-
-                <h3>
-                    ${twist.name}
-                </h3>
-
-                <p>
-                    ${twist.description}
-                </p>
-
-                <button
-                    onclick="toggleTwist(${twist.id})"
-                >
-                    ${
-                        twist.active
-                        ? "DEACTIVATE"
-                        : "ACTIVATE"
-                    }
-                </button>
-
-                <button
-                    onclick="deleteTwist(${twist.id})"
-                >
-                    DELETE
-                </button>
-
-            `;
-
-
-            list.appendChild(
-                card
-            );
-
-        }
-    );
-
-}
-
-
-
-/* =========================================
-   TOGGLE TWIST
-========================================= */
-
-function toggleTwist(id) {
-
-    const twist =
-        customTwists.find(
-            t =>
-            t.id === id
-        );
-
-
-    if (!twist) return;
-
-
-    twist.active =
-        !twist.active;
-
-
-    addEvent(
-
-        "🌀 Twist " +
-
-        twist.name +
-
-        " is now " +
-
-        (
-            twist.active
-            ? "ACTIVE."
-            : "INACTIVE."
-        )
-
-    );
-
-
-    updateTwistDisplay();
-
-}
-
-
-
-/* =========================================
-   DELETE TWIST
-========================================= */
-
-function deleteTwist(id) {
-
-    customTwists =
-        customTwists.filter(
-            twist =>
-            twist.id !== id
-        );
-
-
-    updateTwistDisplay();
-
-}
-
-
-
-/* =========================================
-   CREATE ALLIANCE
-========================================= */
-
-function createAlliance() {
-
-    const name =
-        document.getElementById(
-            "allianceNameInput"
-        ).value.trim();
-
-
-    const membersText =
-        document.getElementById(
-            "allianceMembersInput"
-        ).value.trim();
-
-
-    if (!name) {
-
-        alert(
-            "Enter an alliance name."
-        );
-
-        return;
-
-    }
-
-
-    const members =
-        membersText
-        .split(",")
-        .map(
-            name =>
-            name.trim()
-        )
-        .filter(
-            name =>
-            name !== ""
-        );
-
-
-    alliances.push({
-
-        id:
-            Date.now(),
-
-        name:
-            name,
-
-        members:
-            members
-
-    });
-
-
-    document.getElementById(
-        "allianceNameInput"
-    ).value = "";
-
-
-    document.getElementById(
-        "allianceMembersInput"
-    ).value = "";
-
-
-    updateAllianceDisplay();
-
-
-    addEvent(
-        "🤝 Alliance formed: " +
-        name
-    );
-
-}
-
-
-
-/* =========================================
-   DISPLAY ALLIANCES
-========================================= */
-
-function updateAllianceDisplay() {
-
-    const list =
-        document.getElementById(
-            "allianceList"
-        );
-
-
-    list.innerHTML = "";
-
-
-    alliances.forEach(
-        alliance => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "alliance-card";
-
-
-            card.innerHTML = `
-
-                <h3>
-                    🤝 ${alliance.name}
-                </h3>
-
-                <p>
-                    ${alliance.members.join(
-                        ", "
-                    )}
-                </p>
-
-            `;
-
-
-            list.appendChild(
-                card
-            );
-
-        }
-    );
-
-}
-
-
-
-/* =========================================
-   RELATIONSHIP DROPDOWNS
-========================================= */
-
-function updateRelationshipPlayers() {
-
-    const first =
-        document.getElementById(
-            "relationshipPlayer1"
-        );
-
-
-    const second =
-        document.getElementById(
-            "relationshipPlayer2"
-        );
-
-
-    first.innerHTML = "";
-
-    second.innerHTML = "";
-
-
-    houseguests.forEach(
-        player => {
-
-            const option1 =
-                document.createElement(
-                    "option"
-                );
-
-            option1.value =
-                player.name;
-
-            option1.textContent =
-                player.name;
-
-
-            first.appendChild(
-                option1
-            );
-
-
-            const option2 =
-                document.createElement(
-                    "option"
-                );
-
-            option2.value =
-                player.name;
-
-            option2.textContent =
-                player.name;
-
-
-            second.appendChild(
-                option2
-            );
-
-        }
-    );
-
-}
-
-
-
-/* =========================================
-   CREATE RELATIONSHIP
-========================================= */
-
-function createRelationship() {
-
-    const player1 =
-        document.getElementById(
-            "relationshipPlayer1"
-        ).value;
-
-
-    const player2 =
-        document.getElementById(
-            "relationshipPlayer2"
-        ).value;
-
-
-    const score =
-        Number(
-            document.getElementById(
-                "relationshipScore"
-            ).value
-        );
-
-
-    if (
-        !player1 ||
-        !player2 ||
-        player1 === player2
-    ) {
-
-        alert(
-            "Choose two different houseguests."
-        );
-
-        return;
-
-    }
-
-
-    relationships.push({
-
-        player1:
-            player1,
-
-        player2:
-            player2,
-
-        score:
-            Math.min(
-                100,
-                Math.max(
-                    0,
-                    score || 50
-                )
-            )
-
-    });
-
-
-    updateRelationshipDisplay();
-
-}
-
-
-
-/* =========================================
-   RELATIONSHIP DISPLAY
-========================================= */
-
-function updateRelationshipDisplay() {
-
-    const list =
-        document.getElementById(
-            "relationshipList"
-        );
-
-
-    list.innerHTML = "";
-
-
-    relationships.forEach(
-        relationship => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "relationship-card";
-
-
-            card.innerHTML = `
-
-                <strong>
-                    ${relationship.player1}
-                </strong>
-
-                ❤️
-
-                <strong>
-                    ${relationship.player2}
-                </strong>
+                <div class="stat">
+                    <span>Status</span>
+                    <strong>${escapeHTML(player.status)}</strong>
+                </div>
 
                 <br>
 
-                Relationship:
-                ${relationship.score}/100
+                <button class="danger" onclick="removeHouseguest(${player.id})">
+                    Remove
+                </button>
 
-            `;
+            </div>
+        `;
 
-
-            list.appendChild(
-                card
-            );
-
-        }
-    );
-
+        grid.appendChild(card);
+    });
 }
 
 
+// ======================================================
+// TWISTS
+// ======================================================
 
-/* =========================================
-   START SEASON
-========================================= */
+function createTwist() {
+
+    const name = document.getElementById("twistNameInput").value.trim();
+    const description = document.getElementById("twistDescriptionInput").value.trim();
+
+    if (!name) {
+        alert("Please enter a twist name.");
+        return;
+    }
+
+    customTwists.push({
+        id: Date.now(),
+        name: name,
+        description: description || "No description provided.",
+        enabled: true
+    });
+
+    document.getElementById("twistNameInput").value = "";
+    document.getElementById("twistDescriptionInput").value = "";
+
+    updateTwistDisplay();
+}
+
+
+function toggleTwist(id) {
+
+    const twist = customTwists.find(function(t) {
+        return t.id === id;
+    });
+
+    if (!twist) return;
+
+    twist.enabled = !twist.enabled;
+
+    updateTwistDisplay();
+}
+
+
+function deleteTwist(id) {
+
+    customTwists = customTwists.filter(function(t) {
+        return t.id !== id;
+    });
+
+    updateTwistDisplay();
+}
+
+
+function updateTwistDisplay() {
+
+    const list = document.getElementById("twistList");
+
+    if (!list) return;
+
+    if (customTwists.length === 0) {
+        list.innerHTML = '<div class="empty">No custom twists created.</div>';
+        return;
+    }
+
+    list.innerHTML = "";
+
+    customTwists.forEach(function(twist) {
+
+        const card = document.createElement("div");
+
+        card.className = "twist-card" + (twist.enabled ? " enabled" : "");
+
+        card.innerHTML = `
+            <h3>${escapeHTML(twist.name)}</h3>
+
+            <p>${escapeHTML(twist.description)}</p>
+
+            <p>
+                Status:
+                <strong>${twist.enabled ? "ACTIVE" : "OFF"}</strong>
+            </p>
+
+            <button onclick="toggleTwist(${twist.id})">
+                ${twist.enabled ? "Disable" : "Enable"}
+            </button>
+
+            <button class="danger" onclick="deleteTwist(${twist.id})">
+                Delete
+            </button>
+        `;
+
+        list.appendChild(card);
+    });
+}
+
+
+// ======================================================
+// ALLIANCES
+// ======================================================
+
+function createAlliance() {
+
+    const name = document.getElementById("allianceNameInput").value.trim();
+    const membersText = document.getElementById("allianceMembersInput").value.trim();
+
+    if (!name) {
+        alert("Please enter an alliance name.");
+        return;
+    }
+
+    const members = membersText
+        ? membersText.split(",").map(function(member) {
+            return member.trim();
+        }).filter(Boolean)
+        : [];
+
+    alliances.push({
+        id: Date.now(),
+        name: name,
+        members: members
+    });
+
+    document.getElementById("allianceNameInput").value = "";
+    document.getElementById("allianceMembersInput").value = "";
+
+    updateAllianceDisplay();
+}
+
+
+function updateAllianceDisplay() {
+
+    const list = document.getElementById("allianceList");
+
+    if (!list) return;
+
+    if (alliances.length === 0) {
+        list.innerHTML = '<div class="empty">No alliances created.</div>';
+        return;
+    }
+
+    list.innerHTML = "";
+
+    alliances.forEach(function(alliance) {
+
+        const card = document.createElement("div");
+
+        card.className = "alliance-card";
+
+        card.innerHTML = `
+            <h3>${escapeHTML(alliance.name)}</h3>
+            <p>
+                <strong>Members:</strong>
+                ${alliance.members.length
+                    ? alliance.members.map(escapeHTML).join(", ")
+                    : "No members listed"}
+            </p>
+        `;
+
+        list.appendChild(card);
+    });
+}
+
+
+// ======================================================
+// RELATIONSHIPS
+// ======================================================
+
+function updateRelationshipPlayers() {
+
+    const player1 = document.getElementById("relationshipPlayer1");
+    const player2 = document.getElementById("relationshipPlayer2");
+
+    if (!player1 || !player2) return;
+
+    player1.innerHTML = "";
+    player2.innerHTML = "";
+
+    houseguests.forEach(function(player) {
+
+        const option1 = document.createElement("option");
+        option1.value = player.id;
+        option1.textContent = player.name;
+
+        const option2 = document.createElement("option");
+        option2.value = player.id;
+        option2.textContent = player.name;
+
+        player1.appendChild(option1);
+        player2.appendChild(option2);
+    });
+}
+
+
+function createRelationship() {
+
+    const player1Id = Number(document.getElementById("relationshipPlayer1").value);
+    const player2Id = Number(document.getElementById("relationshipPlayer2").value);
+
+    const score = Number(document.getElementById("relationshipScore").value) || 0;
+
+    if (!player1Id || !player2Id) {
+        alert("You need at least two houseguests.");
+        return;
+    }
+
+    if (player1Id === player2Id) {
+        alert("A player cannot have a relationship with themselves.");
+        return;
+    }
+
+    const player1 = houseguests.find(function(p) {
+        return p.id === player1Id;
+    });
+
+    const player2 = houseguests.find(function(p) {
+        return p.id === player2Id;
+    });
+
+    if (!player1 || !player2) return;
+
+    relationships.push({
+        id: Date.now(),
+        player1: player1.name,
+        player2: player2.name,
+        score: score
+    });
+
+    updateRelationshipDisplay();
+}
+
+
+function updateRelationshipDisplay() {
+
+    const list = document.getElementById("relationshipList");
+
+    if (!list) return;
+
+    if (relationships.length === 0) {
+        list.innerHTML = '<div class="empty">No relationships created.</div>';
+        return;
+    }
+
+    list.innerHTML = "";
+
+    relationships.forEach(function(rel) {
+
+        const card = document.createElement("div");
+
+        card.className = "relationship-card";
+
+        card.innerHTML = `
+            <strong>${escapeHTML(rel.player1)}</strong>
+            ↔
+            <strong>${escapeHTML(rel.player2)}</strong>
+
+            <br><br>
+
+            Relationship:
+            <strong>${rel.score}</strong>
+        `;
+
+        list.appendChild(card);
+    });
+}
+
+
+// ======================================================
+// START SEASON
+// ======================================================
 
 function startNewSeason() {
 
-    if (
-        houseguests.length < 4
-    ) {
-
-        alert(
-            "You need at least 4 houseguests."
-        );
-
+    if (houseguests.length < 2) {
+        alert("Add at least 2 houseguests before starting the season.");
         return;
-
     }
 
+    evictedHouseguests = [];
+    jury = [];
 
-    seasonStarted =
-        true;
+    currentWeek = 1;
+    currentHOH = null;
+    nominees = [];
+    povWinner = null;
 
+    seasonStarted = true;
 
-    currentWeek =
-        1;
-
-
-    currentHOH =
-        null;
-
-
-    nominees =
-        [];
-
-
-    povWinner =
-        null;
-
-
-    evictedHouseguests =
-        [];
-
-
-    jury =
-        [];
-
-
-    addEvent(
-        "🏠 The Big Brother season has officially begun!"
-    );
-
+    addEvent("The Big Brother season has officially started!");
 
     updateAllDisplays();
 
+    showSection("week");
 }
 
 
+// ======================================================
+// RANDOM PLAYER
+// ======================================================
 
-/* =========================================
-   RANDOM PLAYER
-========================================= */
+function getRandomPlayer(excluded) {
 
-function getRandomPlayer(
-    excluded = []
-) {
+    excluded = excluded || [];
 
-    const available =
-        houseguests.filter(
-            player =>
-            player.active &&
-            !excluded.includes(
-                player.name
-            )
-        );
+    const available = houseguests.filter(function(player) {
 
+        return player.status === "In House" &&
+               !excluded.includes(player.id);
 
-    if (
-        available.length === 0
-    ) {
+    });
 
+    if (available.length === 0) {
         return null;
-
     }
 
-
-    return available[
-        Math.floor(
-            Math.random() *
-            available.length
-        )
-    ];
-
+    return available[Math.floor(Math.random() * available.length)];
 }
 
 
+// ======================================================
+// COMPETITION WINNER
+// ======================================================
 
-/* =========================================
-   STAT-BASED COMPETITION
-========================================= */
+function competitionWinner(type) {
 
-function competitionWinner(
-    type
-) {
+    const available = houseguests.filter(function(player) {
+        return player.status === "In House";
+    });
 
-    const players =
-        houseguests.filter(
-            player =>
-            player.active
-        );
-
-
-    if (
-        players.length === 0
-    ) {
-
+    if (available.length === 0) {
         return null;
-
     }
 
+    let winner = null;
 
-    let weightedPlayers =
-        [];
+    let highestScore = -Infinity;
 
+    available.forEach(function(player) {
 
-    players.forEach(
-        player => {
+        let score = Math.random() * 10;
 
-            let stat =
-                5;
-
-
-            if (
-                type === "physical"
-            ) {
-
-                stat =
-                    player.physical;
-
-            }
-
-
-            if (
-                type === "mental"
-            ) {
-
-                stat =
-                    player.mental;
-
-            }
-
-
-            if (
-                type === "social"
-            ) {
-
-                stat =
-                    player.social;
-
-            }
-
-
-            if (
-                type === "strategy"
-            ) {
-
-                stat =
-                    player.strategy;
-
-            }
-
-
-            /*
-                Higher stats give a player
-                more entries in the draw.
-            */
-
-            for (
-                let i = 0;
-                i < stat;
-                i++
-            ) {
-
-                weightedPlayers.push(
-                    player
-                );
-
-            }
-
+        if (type === "physical") {
+            score += player.physical * 2;
         }
-    );
 
+        if (type === "mental") {
+            score += player.mental * 2;
+        }
 
-    return weightedPlayers[
-        Math.floor(
-            Math.random() *
-            weightedPlayers.length
-        )
-    ];
+        if (type === "social") {
+            score += player.social * 2;
+        }
 
+        if (type === "strategy") {
+            score += player.strategy * 2;
+        }
+
+        if (score > highestScore) {
+            highestScore = score;
+            winner = player;
+        }
+
+    });
+
+    return winner;
 }
 
 
-
-/* =========================================
-   HOH
-========================================= */
+// ======================================================
+// HOH
+// ======================================================
 
 function runHOH() {
 
     if (!seasonStarted) {
-
-        alert(
-            "Start the season first."
-        );
-
+        alert("Start a new season first.");
         return;
-
     }
 
+    const winner = competitionWinner("physical");
 
-    const winner =
-        competitionWinner(
-            "physical"
-        );
+    if (!winner) {
+        alert("There are no eligible houseguests.");
+        return;
+    }
 
+    currentHOH = winner;
 
-    if (!winner) return;
-
-
-    currentHOH =
-        winner.name;
-
-
-    addEvent(
-
-        "🏆 " +
-        winner.name +
-        " has won HOH!"
-
-    );
-
+    addEvent(winner.name + " won the Head of Household competition!");
 
     updateGameDisplay();
-
 }
 
 
-
-/* =========================================
-   NOMINATIONS
-========================================= */
+// ======================================================
+// NOMINATIONS
+// ======================================================
 
 function makeNominations() {
 
+    if (!seasonStarted) {
+        alert("Start a new season first.");
+        return;
+    }
+
     if (!currentHOH) {
-
-        alert(
-            "Run HOH first."
-        );
-
+        alert("Play the HOH competition first.");
         return;
-
     }
 
+    const candidates = houseguests.filter(function(player) {
 
-    const available =
-        houseguests.filter(
-            player =>
-            player.active &&
-            player.name !== currentHOH
-        );
+        return player.status === "In House" &&
+               player.id !== currentHOH.id;
 
+    });
 
-    if (
-        available.length < 2
-    ) {
-
+    if (candidates.length < 2) {
+        alert("There are not enough players to make nominations.");
         return;
-
     }
 
+    const shuffled = candidates.sort(function() {
+        return Math.random() - 0.5;
+    });
 
-    nominees =
-        [];
-
-
-    while (
-        nominees.length < 2
-    ) {
-
-        const player =
-            available[
-                Math.floor(
-                    Math.random() *
-                    available.length
-                )
-            ];
-
-
-        if (
-            !nominees.includes(
-                player.name
-            )
-        ) {
-
-            nominees.push(
-                player.name
-            );
-
-        }
-
-    }
-
+    nominees = [shuffled[0], shuffled[1]];
 
     addEvent(
-
-        "📋 " +
-        currentHOH +
+        currentHOH.name +
         " nominated " +
-        nominees[0] +
+        nominees[0].name +
         " and " +
-        nominees[1] +
-        "."
-
+        nominees[1].name +
+        " for eviction."
     );
 
-
     updateGameDisplay();
-
 }
 
 
-
-/* =========================================
-   POV
-========================================= */
+// ======================================================
+// POV
+// ======================================================
 
 function runPOV() {
 
-    if (
-        nominees.length !== 2
-    ) {
-
-        alert(
-            "You need two nominees first."
-        );
-
+    if (!seasonStarted) {
+        alert("Start a new season first.");
         return;
-
     }
 
+    if (nominees.length !== 2) {
+        alert("Make nominations first.");
+        return;
+    }
 
-    const winner =
-        competitionWinner(
-            "mental"
-        );
-
+    const winner = competitionWinner("mental");
 
     if (!winner) return;
 
+    povWinner = winner;
 
-    povWinner =
-        winner.name;
-
-
-    addEvent(
-
-        "🥇 " +
-        winner.name +
-        " has won the Power of Veto!"
-
-    );
-
+    addEvent(winner.name + " won the Power of Veto!");
 
     updateGameDisplay();
-
 }
 
 
-
-/* =========================================
-   USE POV
-========================================= */
+// ======================================================
+// USE POV
+// ======================================================
 
 function usePOV() {
 
     if (!povWinner) {
-
-        alert(
-            "Run POV first."
-        );
-
+        alert("Play the Power of Veto first.");
         return;
-
     }
 
+    if (nominees.length !== 2) {
+        alert("There are no nominations.");
+        return;
+    }
 
-    const useVeto =
-        confirm(
+    const povOnNominee = nominees.some(function(player) {
+        return player.id === povWinner.id;
+    });
 
-            povWinner +
-            " has won POV.\n\n" +
-            "Use the Power of Veto?"
-
-        );
-
-
-    if (!useVeto) {
-
+    if (!povOnNominee) {
         addEvent(
-
-            "🦸 " +
-            povWinner +
-            " decided not to use POV."
-
+            povWinner.name +
+            " chose not to use the Power of Veto."
         );
+
+        alert("The POV winner did not use the Power of Veto.");
 
         return;
-
     }
 
+    const replacementCandidates = houseguests.filter(function(player) {
 
-    let removedNominee =
-        nominees[0];
+        return player.status === "In House" &&
+               player.id !== currentHOH.id &&
+               player.id !== nominees[0].id &&
+               player.id !== nominees[1].id &&
+               player.id !== povWinner.id;
 
+    });
 
-    if (
-        nominees.includes(
-            povWinner
-        )
-    ) {
-
-        removedNominee =
-            povWinner;
-
+    if (replacementCandidates.length === 0) {
+        alert("There is no replacement nominee available.");
+        return;
     }
-
-
-    nominees =
-        nominees.filter(
-            name =>
-            name !== removedNominee
-        );
-
 
     const replacement =
-        getRandomPlayer(
-            [
-                currentHOH,
-                povWinner,
-                ...nominees
-            ]
-        );
+        replacementCandidates[
+            Math.floor(Math.random() * replacementCandidates.length)
+        ];
 
+    const removedNominee = povWinner;
 
-    if (replacement) {
+    nominees = nominees.filter(function(player) {
+        return player.id !== removedNominee.id;
+    });
 
-        nominees.push(
-            replacement.name
-        );
+    nominees.push(replacement);
 
+    addEvent(
+        povWinner.name +
+        " used the Power of Veto and removed themselves from the block."
+    );
 
-        addEvent(
-
-            "🦸 " +
-            povWinner +
-            " used POV on " +
-            removedNominee +
-            ". " +
-            currentHOH +
-            " nominated " +
-            replacement.name +
-            " as the replacement nominee."
-
-        );
-
-    }
-
+    addEvent(
+        currentHOH.name +
+        " nominated " +
+        replacement.name +
+        " as the replacement nominee."
+    );
 
     updateGameDisplay();
-
 }
 
 
-
-/* =========================================
-   EVICTION
-========================================= */
+// ======================================================
+// EVICTION
+// ======================================================
 
 function runEviction() {
 
-    if (
-        nominees.length !== 2
-    ) {
-
-        alert(
-            "There must be two nominees."
-        );
-
+    if (!seasonStarted) {
+        alert("Start a new season first.");
         return;
-
     }
 
-
-    const nominee1 =
-        houseguests.find(
-            player =>
-            player.name ===
-            nominees[0]
-        );
-
-
-    const nominee2 =
-        houseguests.find(
-            player =>
-            player.name ===
-            nominees[1]
-        );
-
-
-    if (
-        !nominee1 ||
-        !nominee2
-    ) {
-
+    if (nominees.length !== 2) {
+        alert("You need two nominees before eviction.");
         return;
-
     }
 
+    const randomIndex = Math.floor(Math.random() * nominees.length);
 
-    /*
-       Social and strategy affect
-       eviction chances.
-    */
+    const evicted = nominees[randomIndex];
 
-    const score1 =
-        nominee1.social +
-        nominee1.strategy +
-        Math.random() * 10;
+    evicted.status = "Evicted";
 
+    evictedHouseguests.push(evicted);
 
-    const score2 =
-        nominee2.social +
-        nominee2.strategy +
-        Math.random() * 10;
+    jury.push(evicted);
 
+    addEvent(evicted.name + " was evicted from the Big Brother house!");
 
-    const evicted =
-        score1 < score2
-        ? nominee1
-        : nominee2;
-
-
-    evicted.active =
-        false;
-
-
-    evictedHouseguests.push(
-        evicted
-    );
-
-
-    /*
-       Players entering the jury
-       once the season gets deeper.
-    */
-
-    if (
-        currentWeek >= 5
-    ) {
-
-        jury.push(
-            evicted
-        );
-
-    }
-
-
-    addEvent(
-
-        "🚪 " +
-        evicted.name +
-        " has been evicted from the Big Brother house!"
-
-    );
-
-
-    nominees =
-        [];
-
-
-    currentHOH =
-        null;
-
-
-    povWinner =
-        null;
-
+    nominees = [];
+    povWinner = null;
+    currentHOH = null;
 
     currentWeek++;
 
-
-    updateAllDisplays();
-
-
     checkForWinner();
 
+    updateAllDisplays();
 }
 
 
-
-/* =========================================
-   WINNER
-========================================= */
+// ======================================================
+// WINNER CHECK
+// ======================================================
 
 function checkForWinner() {
 
-    const remaining =
-        houseguests.filter(
-            player =>
-            player.active
-        );
+    const remaining = houseguests.filter(function(player) {
+        return player.status === "In House";
+    });
 
+    if (remaining.length <= 2) {
 
-    if (
-        remaining.length === 1
-    ) {
+        seasonStarted = false;
 
-        const winner =
-            remaining[0];
+        const finale = document.getElementById("finaleContent");
 
+        if (finale) {
 
-        seasonStarted =
-            false;
+            finale.innerHTML = `
+                <h2>Finale!</h2>
 
+                <p>The final two houseguests are:</p>
 
-        document.getElementById(
-            "finaleContent"
-        ).innerHTML = `
+                <h3>
+                    ${remaining.map(function(player) {
+                        return escapeHTML(player.name);
+                    }).join(" vs. ")}
+                </h3>
 
-            <h2>
-                👑 ${winner.name}
-            </h2>
+                <p>
+                    Your season has reached the finale.
+                </p>
+            `;
+        }
 
-            <p>
-                ${winner.name}
-                is the winner of Big Brother!
-            </p>
-
-        `;
-
-
-        addEvent(
-
-            "👑 " +
-            winner.name +
-            " has WON Big Brother!"
-
-        );
-
-
-        showSection(
-            "finale"
-        );
-
+        addEvent("The season has reached the Final Two!");
     }
-
 }
 
 
+// ======================================================
+// EVENT LOG
+// ======================================================
 
-/* =========================================
-   EVENT LOG
-========================================= */
+function addEvent(message) {
 
-function addEvent(
-    message
-) {
+    const eventLog = document.getElementById("eventLog");
 
-    const log =
-        document.getElementById(
-            "eventLog"
-        );
+    if (!eventLog) return;
 
+    const event = document.createElement("div");
 
-    const event =
-        document.createElement(
-            "div"
-        );
+    event.className = "event";
 
+    event.textContent =
+        "Week " + currentWeek + ": " + message;
 
-    event.className =
-        "event";
-
-
-    event.innerHTML =
-        message.replace(
-            /\n/g,
-            "<br>"
-        );
-
-
-    log.prepend(
-        event
-    );
-
+    eventLog.prepend(event);
 }
 
 
-
-/* =========================================
-   MEMORY WALL
-========================================= */
+// ======================================================
+// MEMORY WALL
+// ======================================================
 
 function updateMemoryWall() {
 
-    const wall =
-        document.getElementById(
-            "memoryWall"
-        );
+    const wall = document.getElementById("memoryWall");
 
+    if (!wall) return;
 
     wall.innerHTML = "";
 
+    houseguests.forEach(function(player) {
 
-    houseguests.forEach(
-        player => {
+        const card = document.createElement("div");
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+        card.className = "memory-card";
 
+        card.innerHTML = `
+            <img src="${escapeHTML(player.image)}"
+                 alt="${escapeHTML(player.name)}"
+                 onerror="this.src='https://placehold.co/400x500?text=Houseguest'">
 
-            card.className =
-                "memory-card";
+            <div>
+                ${escapeHTML(player.name)}
+                <br>
+                <small>${escapeHTML(player.status)}</small>
+            </div>
+        `;
 
-
-            card.innerHTML = `
-
-                <img
-                    src="${player.image}"
-                    alt="${player.name}"
-                >
-
-                <h3>
-                    ${player.name}
-                </h3>
-
-            `;
-
-
-            wall.appendChild(
-                card
-            );
-
-        }
-    );
-
+        wall.appendChild(card);
+    });
 }
 
 
-
-/* =========================================
-   JURY DISPLAY
-========================================= */
+// ======================================================
+// JURY
+// ======================================================
 
 function updateJuryDisplay() {
 
-    const list =
-        document.getElementById(
-            "juryList"
-        );
+    const list = document.getElementById("juryList");
 
+    if (!list) return;
+
+    if (jury.length === 0) {
+        list.innerHTML = '<div class="empty">No jury members yet.</div>';
+        return;
+    }
 
     list.innerHTML = "";
 
+    jury.forEach(function(player) {
 
-    if (
-        jury.length === 0
-    ) {
+        const row = document.createElement("div");
 
-        list.innerHTML =
-            "No jury members yet.";
+        row.className = "player-row";
 
-        return;
+        row.textContent = player.name;
 
-    }
-
-
-    jury.forEach(
-        player => {
-
-            const item =
-                document.createElement(
-                    "span"
-                );
-
-
-            item.className =
-                "player-item evicted";
-
-
-            item.textContent =
-                player.name;
-
-
-            list.appendChild(
-                item
-            );
-
-        }
-    );
-
+        list.appendChild(row);
+    });
 }
 
 
-
-/* =========================================
-   EVICTED DISPLAY
-========================================= */
+// ======================================================
+// EVICTED PLAYERS
+// ======================================================
 
 function updateEvictedDisplay() {
 
-    const list =
-        document.getElementById(
-            "evictedPlayers"
-        );
+    const list = document.getElementById("evictedPlayers");
 
+    if (!list) return;
+
+    if (evictedHouseguests.length === 0) {
+        list.innerHTML = '<div class="empty">No evicted players yet.</div>';
+        return;
+    }
 
     list.innerHTML = "";
 
+    evictedHouseguests.forEach(function(player) {
 
-    evictedHouseguests.forEach(
-        player => {
+        const row = document.createElement("div");
 
-            const item =
-                document.createElement(
-                    "span"
-                );
+        row.className = "player-row";
 
+        row.textContent =
+            player.name + " — Evicted";
 
-            item.className =
-                "player-item evicted";
-
-
-            item.textContent =
-                player.name;
-
-
-            list.appendChild(
-                item
-            );
-
-        }
-    );
-
+        list.appendChild(row);
+    });
 }
 
 
-
-/* =========================================
-   GAME DISPLAY
-========================================= */
+// ======================================================
+// GAME DISPLAY
+// ======================================================
 
 function updateGameDisplay() {
 
-    document.getElementById(
-        "weekTitle"
-    ).textContent =
-        "Week " +
-        currentWeek;
+    const weekTitle = document.getElementById("weekTitle");
+    const hohDisplay = document.getElementById("hohDisplay");
+    const nomineesDisplay = document.getElementById("nomineesDisplay");
+    const povDisplay = document.getElementById("povDisplay");
+    const weekDisplay = document.getElementById("weekDisplay");
 
+    if (weekTitle) {
+        weekTitle.textContent = "Week " + currentWeek;
+    }
 
-    document.getElementById(
-        "weekDisplay"
-    ).textContent =
-        currentWeek;
+    if (hohDisplay) {
 
+        hohDisplay.textContent =
+            currentHOH
+                ? currentHOH.name
+                : "Not played";
+    }
 
-    document.getElementById(
-        "hohDisplay"
-    ).textContent =
-        currentHOH ||
-        "None";
+    if (nomineesDisplay) {
 
+        nomineesDisplay.textContent =
+            nominees.length
+                ? nominees.map(function(player) {
+                    return player.name;
+                }).join(" & ")
+                : "Not nominated";
+    }
 
-    document.getElementById(
-        "nomineesDisplay"
-    ).textContent =
+    if (povDisplay) {
 
-        nominees.length
-        ? nominees.join(
-            " & "
-        )
-        : "None";
+        povDisplay.textContent =
+            povWinner
+                ? povWinner.name
+                : "Not played";
+    }
 
+    if (weekDisplay) {
 
-    document.getElementById(
-        "povDisplay"
-    ).textContent =
-        povWinner ||
-        "None";
+        if (!seasonStarted) {
 
+            weekDisplay.textContent =
+                "Start a season to begin playing.";
+
+        } else {
+
+            weekDisplay.textContent =
+                "The house is currently playing Week " +
+                currentWeek +
+                ".";
+        }
+    }
 }
 
 
-
-/* =========================================
-   SEASON SUMMARY
-========================================= */
+// ======================================================
+// SEASON SUMMARY
+// ======================================================
 
 function updateSeasonSummary() {
 
-    const summary =
-        document.getElementById(
-            "seasonSummary"
-        );
+    const summary = document.getElementById("seasonSummary");
 
+    if (!summary) return;
 
-    const remaining =
-        houseguests.filter(
-            player =>
-            player.active
-        );
-
+    const remaining = houseguests.filter(function(player) {
+        return player.status === "In House";
+    });
 
     summary.innerHTML = `
-
-        <p>
-            <strong>
-                Week:
-            </strong>
-            ${currentWeek}
-        </p>
-
-        <p>
-            <strong>
-                Houseguests Remaining:
-            </strong>
-            ${remaining.length}
-        </p>
-
-        <p>
-            <strong>
-                Evicted:
-            </strong>
-            ${evictedHouseguests.length}
-        </p>
-
-        <p>
-            <strong>
-                Jury:
-            </strong>
-            ${jury.length}
-        </p>
-
-        <p>
-            <strong>
-                Active Twists:
-            </strong>
-            ${
-                customTwists.filter(
-                    twist =>
-                    twist.active
-                ).length
-            }
-        </p>
-
+        <p><strong>Season Started:</strong> ${seasonStarted ? "Yes" : "No"}</p>
+        <p><strong>Current Week:</strong> ${currentWeek}</p>
+        <p><strong>Houseguests:</strong> ${houseguests.length}</p>
+        <p><strong>Still in House:</strong> ${remaining.length}</p>
+        <p><strong>Evicted:</strong> ${evictedHouseguests.length}</p>
+        <p><strong>Jury:</strong> ${jury.length}</p>
+        <p><strong>Active Twists:</strong> ${customTwists.filter(function(t) {
+            return t.enabled;
+        }).length}</p>
     `;
-
 }
 
 
+// ======================================================
+// SAVE GAME
+// ======================================================
 
-/* =========================================
-   UPDATE EVERYTHING
-========================================= */
+function saveGame() {
+
+    const gameState = {
+        houseguests: houseguests,
+        evictedHouseguests: evictedHouseguests,
+        jury: jury,
+        alliances: alliances,
+        relationships: relationships,
+        customTwists: customTwists,
+        currentWeek: currentWeek,
+        currentHOH: currentHOH,
+        nominees: nominees,
+        povWinner: povWinner,
+        seasonStarted: seasonStarted
+    };
+
+    localStorage.setItem(
+        "bigBrotherSimulatorSave",
+        JSON.stringify(gameState)
+    );
+
+    alert("Game saved!");
+}
+
+
+// ======================================================
+// LOAD GAME
+// ======================================================
+
+function loadGame() {
+
+    const saved = localStorage.getItem("bigBrotherSimulatorSave");
+
+    if (!saved) {
+        alert("No saved game was found.");
+        return;
+    }
+
+    try {
+
+        const gameState = JSON.parse(saved);
+
+        houseguests = gameState.houseguests || [];
+        evictedHouseguests = gameState.evictedHouseguests || [];
+        jury = gameState.jury || [];
+        alliances = gameState.alliances || [];
+        relationships = gameState.relationships || [];
+        customTwists = gameState.customTwists || [];
+
+        currentWeek = gameState.currentWeek || 1;
+        currentHOH = gameState.currentHOH || null;
+        nominees = gameState.nominees || [];
+        povWinner = gameState.povWinner || null;
+        seasonStarted = gameState.seasonStarted || false;
+
+        updateAllDisplays();
+
+        alert("Game loaded!");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("The saved game could not be loaded.");
+    }
+}
+
+
+// ======================================================
+// RESET
+// ======================================================
+
+function resetGame() {
+
+    const confirmed = confirm(
+        "Are you sure you want to completely reset the simulator?"
+    );
+
+    if (!confirmed) return;
+
+    houseguests = [];
+    evictedHouseguests = [];
+    jury = [];
+    alliances = [];
+    relationships = [];
+    customTwists = [];
+
+    currentWeek = 1;
+    currentHOH = null;
+    nominees = [];
+    povWinner = null;
+    seasonStarted = false;
+
+    localStorage.removeItem("bigBrotherSimulatorSave");
+
+    const eventLog = document.getElementById("eventLog");
+
+    if (eventLog) {
+        eventLog.innerHTML = "";
+    }
+
+    updateAllDisplays();
+
+    showSection("home");
+
+    alert("Simulator reset.");
+}
+
+
+// ======================================================
+// UPDATE EVERYTHING
+// ======================================================
 
 function updateAllDisplays() {
 
     updateCastDisplay();
-
     updateTwistDisplay();
-
     updateAllianceDisplay();
-
     updateRelationshipPlayers();
-
     updateRelationshipDisplay();
-
     updateMemoryWall();
-
     updateJuryDisplay();
-
     updateEvictedDisplay();
-
     updateGameDisplay();
-
     updateSeasonSummary();
-
 }
 
 
+// ======================================================
+// BASIC HTML ESCAPE
+// ======================================================
 
-/* =========================================
-   SAVE GAME
-========================================= */
+function escapeHTML(value) {
 
-function saveGame() {
-
-    const game = {
-
-        houseguests,
-
-        evictedHouseguests,
-
-        jury,
-
-        alliances,
-
-        relationships,
-
-        customTwists,
-
-        currentWeek,
-
-        currentHOH,
-
-        nominees,
-
-        povWinner,
-
-        seasonStarted
-
-    };
-
-
-    localStorage.setItem(
-
-        "myBigBrotherSimulator",
-
-        JSON.stringify(
-            game
-        )
-
-    );
-
-
-    alert(
-        "Your Big Brother season has been saved!"
-    );
-
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
+// ======================================================
+// STARTUP
+// ======================================================
 
-/* =========================================
-   LOAD GAME
-========================================= */
+document.addEventListener("DOMContentLoaded", function() {
 
-function loadGame() {
-
-    const saved =
-        localStorage.getItem(
-            "myBigBrotherSimulator"
-        );
-
-
-    if (!saved) {
-
-        alert(
-            "No saved season found."
-        );
-
-        return;
-
-    }
-
-
-    const game =
-        JSON.parse(
-            saved
-        );
-
-
-    houseguests =
-        game.houseguests || [];
-
-
-    evictedHouseguests =
-        game.evictedHouseguests || [];
-
-
-    jury =
-        game.jury || [];
-
-
-    alliances =
-        game.alliances || [];
-
-
-    relationships =
-        game.relationships || [];
-
-
-    customTwists =
-        game.customTwists || [];
-
-
-    currentWeek =
-        game.currentWeek || 1;
-
-
-    currentHOH =
-        game.currentHOH || null;
-
-
-    nominees =
-        game.nominees || [];
-
-
-    povWinner =
-        game.povWinner || null;
-
-
-    seasonStarted =
-        game.seasonStarted || false;
-
+    console.log("Big Brother Simulator JavaScript loaded successfully.");
 
     updateAllDisplays();
 
-
-    addEvent(
-        "💾 Saved season loaded."
-    );
-
-}
-
-
-
-/* =========================================
-   RESET
-========================================= */
-
-function resetGame() {
-
-    if (
-        !confirm(
-            "Are you sure you want to erase your entire season?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    houseguests = [];
-
-    evictedHouseguests = [];
-
-    jury = [];
-
-    alliances = [];
-
-    relationships = [];
-
-    customTwists = [];
-
-    currentWeek = 1;
-
-    currentHOH = null;
-
-    nominees = [];
-
-    povWinner = null;
-
-    seasonStarted = false;
-
-
-    localStorage.removeItem(
-        "myBigBrotherSimulator"
-    );
-
-
-    document.getElementById(
-        "eventLog"
-    ).innerHTML =
-        "<p>Your season is ready.</p>";
-
-
-    updateAllDisplays();
-
-
-    alert(
-        "Everything has been reset."
-    );
-
-}
-
-
-
-/* =========================================
-   INITIALIZE
-========================================= */
-
-updateAllDisplays();
-```
+});
