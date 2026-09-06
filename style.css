@@ -1,719 +1,269 @@
-style.css
-```css
 * {
     box-sizing: border-box;
 }
 
-
 body {
-
     margin: 0;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background:
-        linear-gradient(
-            135deg,
-            #050505,
-            #171717,
-            #280044
-        );
-
+    font-family: Arial, Helvetica, sans-serif;
+    background: #080b16;
     color: white;
-
-    min-height: 100vh;
 }
 
-
-/* HEADER */
-
-header {
-
+.top-header {
     text-align: center;
-
-    padding: 35px 20px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #ff0055,
-            #7000ff
-        );
-
-    box-shadow:
-        0 5px 25px black;
-
+    padding: 30px 20px;
+    background: linear-gradient(135deg, #111936, #24104a);
+    border-bottom: 3px solid #ffffff;
 }
 
-
-header h1 {
-
-    font-size: 48px;
-
+.top-header h1 {
     margin: 0;
-
-    letter-spacing: 4px;
-
+    font-size: 48px;
+    letter-spacing: 5px;
 }
 
-
-header p {
-
+.top-header p {
+    margin: 8px 0 0;
     font-size: 18px;
-
 }
 
-
-
-/* NAVIGATION */
-
-nav {
-
+.main-nav {
     display: flex;
-
     flex-wrap: wrap;
-
     justify-content: center;
-
-    gap: 5px;
-
-    background: #080808;
-
-    padding: 12px;
-
+    gap: 8px;
+    padding: 15px;
+    background: #111525;
     position: sticky;
-
     top: 0;
-
     z-index: 10;
-
 }
-
-
-nav button {
-
-    background: #252525;
-
-    border: 1px solid #555;
-
-    color: white;
-
-    padding: 12px 18px;
-
-    border-radius: 7px;
-
-    cursor: pointer;
-
-}
-
-
-nav button:hover {
-
-    background: #7200ff;
-
-}
-
-
-
-/* MAIN */
-
-main {
-
-    max-width: 1250px;
-
-    margin: auto;
-
-    padding: 25px;
-
-}
-
-
-
-/* PAGE SECTIONS */
-
-.page-section {
-
-    display: none;
-
-}
-
-
-.page-section.active {
-
-    display: block;
-
-}
-
-
-
-/* PANELS */
-
-.panel {
-
-    background:
-        rgba(20, 20, 20, 0.95);
-
-    border:
-        2px solid #444;
-
-    border-radius:
-        15px;
-
-    padding:
-        25px;
-
-    margin-bottom:
-        25px;
-
-    box-shadow:
-        0 10px 35px black;
-
-}
-
-
-.panel h2 {
-
-    color: #ffcc00;
-
-    margin-top: 0;
-
-}
-
-
-
-/* BUTTONS */
 
 button {
-
-    background:
-        linear-gradient(
-            135deg,
-            #ff0055,
-            #8b00ff
-        );
-
     border: none;
-
+    border-radius: 8px;
+    padding: 12px 18px;
+    background: #2a3152;
     color: white;
-
-    padding:
-        12px 18px;
-
-    border-radius:
-        8px;
-
-    margin:
-        5px;
-
+    font-weight: bold;
     cursor: pointer;
-
-    font-size:
-        15px;
-
-    font-weight:
-        bold;
-
-    transition:
-        0.2s;
-
+    transition: 0.2s;
 }
-
 
 button:hover {
-
-    transform:
-        translateY(-2px);
-
-    filter:
-        brightness(1.25);
-
+    transform: translateY(-2px);
+    filter: brightness(1.2);
 }
 
-
-.danger {
-
-    background:
-        #c40000;
-
+button.primary {
+    background: #5b35d5;
 }
 
+button.danger {
+    background: #b82d45;
+}
 
+main {
+    max-width: 1200px;
+    margin: auto;
+    padding: 25px;
+}
 
-/* INPUTS */
+.page-section {
+    display: none;
+}
+
+.page-section.active {
+    display: block;
+}
+
+.hero {
+    text-align: center;
+    padding: 50px 20px;
+    background: linear-gradient(135deg, #151d3d, #321456);
+    border-radius: 15px;
+    margin-bottom: 25px;
+}
+
+.hero h2 {
+    font-size: 34px;
+    margin-top: 0;
+}
+
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.panel {
+    background: #121729;
+    border: 1px solid #303754;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 25px;
+}
+
+.panel h2,
+.panel h3 {
+    margin-top: 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
 
 input,
 textarea,
 select {
-
     width: 100%;
-
-    padding: 13px;
-
-    margin:
-        6px 0;
-
-    border-radius:
-        7px;
-
-    border:
-        1px solid #555;
-
-    background:
-        #0d0d0d;
-
+    padding: 12px;
+    border-radius: 7px;
+    border: 1px solid #414968;
+    background: #080b16;
     color: white;
-
-    font-size:
-        15px;
-
+    font-size: 15px;
 }
-
 
 textarea {
-
-    min-height:
-        100px;
-
-    resize:
-        vertical;
-
+    min-height: 120px;
+    resize: vertical;
+    margin-bottom: 15px;
 }
-
-
-
-/* CAST FORM */
-
-.form-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            2,
-            1fr
-        );
-
-    gap:
-        10px;
-
-}
-
-
-
-/* CAST */
 
 .cast-grid {
-
     display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(
-                180px,
-                1fr
-            )
-        );
-
-    gap:
-        20px;
-
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 18px;
 }
-
 
 .houseguest-card {
-
-    background:
-        #222;
-
-    border:
-        2px solid #555;
-
-    border-radius:
-        14px;
-
-    overflow:
-        hidden;
-
-    text-align:
-        center;
-
-    transition:
-        0.2s;
-
+    background: #1a2035;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #363e5d;
 }
-
-
-.houseguest-card:hover {
-
-    transform:
-        scale(1.03);
-
-    border-color:
-        #ffcc00;
-
-}
-
 
 .houseguest-card img {
-
-    width:
-        100%;
-
-    height:
-        220px;
-
-    object-fit:
-        cover;
-
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    background: #30364c;
 }
 
-
-.houseguest-card h3 {
-
-    margin:
-        12px 5px 5px;
-
-    font-size:
-        20px;
-
+.houseguest-info {
+    padding: 15px;
 }
 
-
-.stats {
-
-    padding:
-        10px;
-
-    text-align:
-        left;
-
+.houseguest-info h3 {
+    margin: 0 0 10px;
 }
 
-
-.stats p {
-
-    margin:
-        5px 0;
-
+.stat {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+    font-size: 14px;
 }
 
-
-
-/* TWISTS */
-
-.twist-card {
-
-    background:
-        #222;
-
-    border:
-        1px solid #555;
-
-    padding:
-        15px;
-
-    border-radius:
-        10px;
-
-    margin:
-        10px 0;
-
-}
-
-
-.twist-card.active {
-
-    border:
-        2px solid #00ff88;
-
-}
-
-
-.twist-card h3 {
-
-    margin-top:
-        0;
-
-    color:
-        #ffcc00;
-
-}
-
-
-
-/* HOUSE */
-
+.twist-card,
 .alliance-card,
-.relationship-card {
-
-    background:
-        #222;
-
-    padding:
-        15px;
-
-    margin:
-        10px 0;
-
-    border-radius:
-        10px;
-
-    border:
-        1px solid #555;
-
+.relationship-card,
+.player-row {
+    background: #1a2035;
+    border: 1px solid #363e5d;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
 }
 
-
-
-/* GAME */
-
-.status-box {
-
-    background:
-        #050505;
-
-    padding:
-        20px;
-
-    border-radius:
-        10px;
-
-    margin:
-        20px 0;
-
+.twist-card h3,
+.alliance-card h3 {
+    margin-top: 0;
 }
 
-
-.status-box p {
-
-    font-size:
-        18px;
-
+.enabled {
+    border-color: #6d42e8;
 }
 
-
-.game-buttons {
-
-    display:
-        flex;
-
-    flex-wrap:
-        wrap;
-
-    justify-content:
-        center;
-
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 18px;
 }
 
-
-
-/* EVENT LOG */
-
-.event-log {
-
-    background:
-        #050505;
-
-    border:
-        1px solid #444;
-
-    border-radius:
-        10px;
-
-    padding:
-        20px;
-
-    min-height:
-        200px;
-
-    max-height:
-        500px;
-
-    overflow-y:
-        auto;
-
+.game-header {
+    text-align: center;
 }
 
+#eventLog {
+    max-height: 350px;
+    overflow-y: auto;
+}
 
 .event {
-
-    border-bottom:
-        1px solid #333;
-
-    padding:
-        12px;
-
-    line-height:
-        1.5;
-
+    padding: 10px;
+    border-bottom: 1px solid #303754;
 }
-
-
-
-/* MEMORY WALL */
 
 .memory-wall {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(
-                150px,
-                1fr
-            )
-        );
-
-    gap:
-        15px;
-
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
 }
-
 
 .memory-card {
-
-    background:
-        #222;
-
-    border:
-        2px solid #555;
-
-    border-radius:
-        10px;
-
-    overflow:
-        hidden;
-
-    text-align:
-        center;
-
+    text-align: center;
+    background: #1a2035;
+    border-radius: 10px;
+    overflow: hidden;
 }
-
 
 .memory-card img {
-
-    width:
-        100%;
-
-    height:
-        180px;
-
-    object-fit:
-        cover;
-
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
 }
 
-
-.memory-card h3 {
-
-    padding:
-        5px;
-
+.memory-card div {
+    padding: 10px;
+    font-weight: bold;
 }
-
-
-
-/* PLAYER LIST */
-
-.player-item {
-
-    display:
-        inline-block;
-
-    background:
-        #292929;
-
-    padding:
-        10px 15px;
-
-    margin:
-        5px;
-
-    border-radius:
-        20px;
-
-}
-
-
-.evicted {
-
-    background:
-        #720000;
-
-}
-
-
-
-/* FINALE */
-
-.finale {
-
-    text-align:
-        center;
-
-}
-
-
-.finale h2 {
-
-    font-size:
-        40px;
-
-}
-
-
-
-/* FOOTER */
 
 footer {
-
-    text-align:
-        center;
-
-    background:
-        #050505;
-
-    padding:
-        25px;
-
+    text-align: center;
+    padding: 30px;
+    color: #9ba3c1;
 }
 
-
-
-/* MOBILE */
-
-@media (
-    max-width: 700px
-) {
-
-    header h1 {
-
-        font-size:
-            32px;
-
-    }
-
-
-    .form-grid {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
-
-    nav button {
-
-        width:
-            100%;
-
-    }
-
+.empty {
+    color: #9ba3c1;
+    padding: 15px;
 }
-```
+
+@media (max-width: 600px) {
+
+    .top-header h1 {
+        font-size: 32px;
+    }
+
+    main {
+        padding: 15px;
+    }
+
+    .main-nav button {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+}
