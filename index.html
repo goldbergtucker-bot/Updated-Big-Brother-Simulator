@@ -1,1 +1,616 @@
 index.html
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Big Brother Simulator</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     HEADER
+========================================= -->
+
+<header>
+
+    <h1>BIG BROTHER</h1>
+
+    <p>
+        My Custom Big Brother Simulator
+    </p>
+
+</header>
+
+
+<!-- =========================================
+     NAVIGATION
+========================================= -->
+
+<nav>
+
+    <button onclick="showSection('home')">
+        HOME
+    </button>
+
+    <button onclick="showSection('cast')">
+        CAST
+    </button>
+
+    <button onclick="showSection('twists')">
+        TWISTS
+    </button>
+
+    <button onclick="showSection('house')">
+        HOUSE
+    </button>
+
+    <button onclick="showSection('week')">
+        WEEK
+    </button>
+
+    <button onclick="showSection('memory')">
+        MEMORY WALL
+    </button>
+
+    <button onclick="showSection('jury')">
+        JURY
+    </button>
+
+    <button onclick="showSection('finale')">
+        FINALE
+    </button>
+
+</nav>
+
+
+<main>
+
+
+<!-- =========================================
+     HOME
+========================================= -->
+
+<section
+    id="home"
+    class="page-section active"
+>
+
+    <div class="panel">
+
+        <h2>
+            Welcome to Your Big Brother Season
+        </h2>
+
+        <p>
+            Create your own houseguests,
+            relationships, alliances,
+            competitions and twists.
+        </p>
+
+        <div class="home-buttons">
+
+            <button onclick="startNewSeason()">
+                START NEW SEASON
+            </button>
+
+            <button onclick="saveGame()">
+                SAVE SEASON
+            </button>
+
+            <button onclick="loadGame()">
+                LOAD SEASON
+            </button>
+
+            <button
+                class="danger"
+                onclick="resetGame()"
+            >
+                RESET
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Season Status
+        </h2>
+
+        <div id="seasonSummary">
+
+            Your season has not started yet.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     CAST
+========================================= -->
+
+<section
+    id="cast"
+    class="page-section"
+>
+
+    <div class="panel">
+
+        <h2>
+            Create Your Custom Cast
+        </h2>
+
+        <p>
+            Add as many houseguests as you want.
+        </p>
+
+
+        <div class="form-grid">
+
+            <input
+                type="text"
+                id="nameInput"
+                placeholder="Houseguest Name"
+            >
+
+
+            <input
+                type="text"
+                id="imageInput"
+                placeholder="Image URL"
+            >
+
+
+            <input
+                type="number"
+                id="physicalInput"
+                placeholder="Physical (1-10)"
+                min="1"
+                max="10"
+            >
+
+
+            <input
+                type="number"
+                id="mentalInput"
+                placeholder="Mental (1-10)"
+                min="1"
+                max="10"
+            >
+
+
+            <input
+                type="number"
+                id="socialInput"
+                placeholder="Social (1-10)"
+                min="1"
+                max="10"
+            >
+
+
+            <input
+                type="number"
+                id="strategyInput"
+                placeholder="Strategy (1-10)"
+                min="1"
+                max="10"
+            >
+
+        </div>
+
+
+        <button onclick="addHouseguest()">
+            + ADD HOUSEGUEST
+        </button>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Your Cast
+        </h2>
+
+        <div
+            id="castGrid"
+            class="cast-grid"
+        ></div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     TWISTS
+========================================= -->
+
+<section
+    id="twists"
+    class="page-section"
+>
+
+    <div class="panel">
+
+        <h2>
+            Create Your Own Twists
+        </h2>
+
+        <p>
+            You can create any twist you want.
+        </p>
+
+
+        <input
+            type="text"
+            id="twistNameInput"
+            placeholder="Twist Name"
+        >
+
+
+        <textarea
+            id="twistDescriptionInput"
+            placeholder="Describe what your twist does..."
+        ></textarea>
+
+
+        <button onclick="createTwist()">
+            + CREATE TWIST
+        </button>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Your Twists
+        </h2>
+
+        <div
+            id="twistList"
+        ></div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     HOUSE
+========================================= -->
+
+<section
+    id="house"
+    class="page-section"
+>
+
+    <div class="panel">
+
+        <h2>
+            Alliances
+        </h2>
+
+
+        <input
+            type="text"
+            id="allianceNameInput"
+            placeholder="Alliance Name"
+        >
+
+
+        <textarea
+            id="allianceMembersInput"
+            placeholder="Enter houseguest names separated by commas"
+        ></textarea>
+
+
+        <button onclick="createAlliance()">
+            + CREATE ALLIANCE
+        </button>
+
+
+        <div id="allianceList"></div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Relationships
+        </h2>
+
+
+        <select id="relationshipPlayer1"></select>
+
+
+        <select id="relationshipPlayer2"></select>
+
+
+        <input
+            type="number"
+            id="relationshipScore"
+            placeholder="Relationship (0-100)"
+            min="0"
+            max="100"
+        >
+
+
+        <button onclick="createRelationship()">
+            SAVE RELATIONSHIP
+        </button>
+
+
+        <div id="relationshipList"></div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     WEEK
+========================================= -->
+
+<section
+    id="week"
+    class="page-section"
+>
+
+    <div class="panel">
+
+        <h2 id="weekTitle">
+            Week 1
+        </h2>
+
+
+        <div class="status-box">
+
+            <p>
+                <strong>HOH:</strong>
+
+                <span id="hohDisplay">
+                    None
+                </span>
+            </p>
+
+
+            <p>
+                <strong>Nominees:</strong>
+
+                <span id="nomineesDisplay">
+                    None
+                </span>
+            </p>
+
+
+            <p>
+                <strong>POV Winner:</strong>
+
+                <span id="povDisplay">
+                    None
+                </span>
+            </p>
+
+
+            <p>
+                <strong>Week:</strong>
+
+                <span id="weekDisplay">
+                    1
+                </span>
+            </p>
+
+        </div>
+
+
+        <div class="game-buttons">
+
+            <button onclick="runHOH()">
+                🏆 RUN HOH
+            </button>
+
+
+            <button onclick="makeNominations()">
+                📋 NOMINATIONS
+            </button>
+
+
+            <button onclick="runPOV()">
+                🥇 RUN POV
+            </button>
+
+
+            <button onclick="usePOV()">
+                🦸 USE POV
+            </button>
+
+
+            <button onclick="runEviction()">
+                🚪 EVICTION
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Event Log
+        </h2>
+
+
+        <div
+            id="eventLog"
+            class="event-log"
+        >
+
+            <p>
+                Your season is ready.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     MEMORY WALL
+========================================= -->
+
+<section
+    id="memory"
+    class="page-section"
+>
+
+    <div class="panel">
+
+        <h2>
+            Memory Wall
+        </h2>
+
+
+        <div
+            id="memoryWall"
+            class="memory-wall"
+        ></div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     JURY
+========================================= -->
+
+<section
+    id="jury"
+    class="page-section"
+>
+
+    <div class="panel">
+
+        <h2>
+            Jury
+        </h2>
+
+
+        <div
+            id="juryList"
+            class="player-list"
+        >
+
+            No jury members yet.
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Evicted Houseguests
+        </h2>
+
+
+        <div
+            id="evictedPlayers"
+            class="player-list"
+        >
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     FINALE
+========================================= -->
+
+<section
+    id="finale"
+    class="page-section"
+>
+
+    <div class="panel finale">
+
+        <h2>
+            👑 FINALE
+        </h2>
+
+
+        <div
+            id="finaleContent"
+        >
+
+            Your finale will appear here
+            when the season reaches the end.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+
+<footer>
+
+    <p>
+        My Custom Big Brother Simulator
+    </p>
+
+</footer>
+
+
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
+```
